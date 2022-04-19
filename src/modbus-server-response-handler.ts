@@ -62,6 +62,7 @@ export default class ModbusServerResponseHandler<FR extends ModbusAbstractRespon
     const fc = request.body.fc
 
     if (isFunctionCode(fc)) {
+      this._server.emit('anyRequest', request)
       switch (fc) {
 
         case FC.READ_COIL:
