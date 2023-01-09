@@ -11,13 +11,15 @@ export interface IModbusServerOptions {
   discrete: Buffer
   holding: Buffer
   input: Buffer
+  slaveId: number
 }
 
 const DEFAULT_MODBUS_SERVER_OPTIONS: IModbusServerOptions = {
   coils: Buffer.alloc(1024),
   discrete: Buffer.alloc(1024),
   holding: Buffer.alloc(1024),
-  input: Buffer.alloc(1024)
+  input: Buffer.alloc(1024),
+  slaveId: -1
 }
 
 export type BufferCB = (buffer: Buffer) => void
@@ -91,6 +93,7 @@ export default class ModbusServer extends EventEmitter {
   public on (event: 'writeMultipleRegisters', listener: (holdingRegisters: Buffer) => void): this
   public on (event: 'postWriteMultipleRegisters', listener: (holdingRegisters: Buffer) => void): this
   public on (event: 'postWriteMultipleRegisters', listener: (request: AbstractRequest, cb: BufferCB) => void): this
+  public on (event: 'anyRequest', listener: (request: AbstractRequest) => void): this
   public on (event: 'connection', listener: (socket: Socket) => void): this
   public on (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener)
@@ -125,6 +128,7 @@ export default class ModbusServer extends EventEmitter {
   public emit (event: 'writeMultipleRegisters', holdingRegisters: Buffer): boolean
   public emit (event: 'postWriteMultipleRegisters', holdingRegisters: Buffer): boolean
   public emit (event: 'postWriteMultipleRegisters', request: AbstractRequest, cb: BufferCB): boolean
+  public emit (event: 'anyRequest', request: AbstractRequest): boolean
   public emit (event: string | symbol, ...args: any[]): boolean {
     return super.emit(event, ...args)
   }
